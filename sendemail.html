@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>إرسال رسالة بريد إلكتروني</title>
+  <style>
+    /* أنماط CSS الخاصة بتنسيق الصفحة */
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+    }
+    
+    label {
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+    
+    input[type="text"], textarea {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 10px;
+    }
+    
+    input[type="submit"] {
+      padding: 10px 20px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <h2>إرسال رسالة بريد إلكتروني</h2>
+  
+  <form id="emailForm">
+    <label for="from">من:</label><br>
+    <input type="text" id="from" name="from" required><br>
+    
+    <label for="to">إلى:</label><br>
+    <input type="text" id="to" name="to" required><br>
+    
+    <label for="subject">الموضوع:</label><br>
+    <input type="text" id="subject" name="subject" required><br>
+    
+    <label for="message">الرسالة:</label><br>
+    <textarea id="message" name="message" required></textarea><br>
+    
+    <input type="submit" value="إرسال الرسالة">
+  </form>
+  
+  <script>
+    // جافاسكريبت لمعالجة إرسال الرسالة
+    document.getElementById("emailForm").addEventListener("submit", function(event) {
+      event.preventDefault();
+      
+      var from = document.getElementById("from").value;
+      var to = document.getElementById("to").value;
+      var subject = document.getElementById("subject").value;
+      var message = document.getElementById("message").value;
+      
+      // يمكنك استخدام خدمة إرسال بريد مثل SendGrid أو Mailgun أو استخدام خادم بريد منفصل
+      // هنا، سنستخدم خادم بريد بسيط يعمل على إرسال البريد عبر بروتوكول SMTP
+      // أنا قمت بإخفاء معلومات الخادم بروتوكول SMTP في هذا المثال ولكن يجب توفيرها لكي يعمل الكود بشكل صحيح
+      var serverAddress = "smtp.example.com";
+      var username = "your_username";
+      var password = "your_password";
+      
+      var mailtoLink = "mailto:" + to +
+                       "?from=" + from +
+                       "&subject=" + encodeURIComponent(subject) +
+                       "&body=" + encodeURIComponent(message);
+      
+      var sendEmailUrl = "https://example.com/sendEmail"; // يجب إنشاء خادم بريد بحيث يتلقى طلب HTTP POST من هذا الرابط
+      var sendEmailRequest = new XMLHttpRequest();
+      sendEmailRequest.open("POST", sendEmailUrl, true);
+      sendEmailRequest.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+      sendEmailRequest.onreadystatechange = function() {
+        if (sendEmailRequest.readyState == 4 && sendEmailRequest.status == 200) {
+          // البريد تم إرساله بنجاح
+          alert("تم إرسال البريد بنجاح!");
+          document.getElementById("emailForm").reset();
+        } else if (sendEmailRequest.readyState == 4) {
+          // حدث خطأ في إرسال البريد
+          alert("حدث خطأ في إرسال البريد. يرجى المحاولة مرة أخرى في وقت لاحق.");
+        }
+      };
+      sendEmailRequest.send("serverAddress=" + serverAddress + "&username=" + username + "&password=" + password + "&mailtoLink=" + encodeURIComponent(mailtoLink));
+    });
+  </script>
+</body>
+</html>
